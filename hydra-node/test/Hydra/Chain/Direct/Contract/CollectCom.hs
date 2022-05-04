@@ -196,7 +196,7 @@ genCollectComMutation (tx, utxo) =
         error "Unexpected empty head datum"
       (TxOutDatumHash _ha) ->
         error "Unexpected hash-only datum"
-      (TxOutDatum sd) ->
+      (TxOutDatumInTx sd) ->
         case fromData $ toPlutusData sd of
           (Just Head.Open{utxoHash}) ->
             TxOut
@@ -221,7 +221,7 @@ genCollectComMutation (tx, utxo) =
         error "Unexpected empty head datum"
       (TxOutDatumHash _ha) ->
         error "Unexpected hash-only datum"
-      (TxOutDatum sd) ->
+      (TxOutDatumInTx sd) ->
         case fromData $ toPlutusData sd of
           (Just Head.Open{parties}) ->
             pure $
