@@ -22,6 +22,7 @@ module Hydra.Chain.Direct.State (
   commit,
   collect,
   close,
+  contest,
   fanout,
 
   -- ** Observing transitions
@@ -47,6 +48,7 @@ import Hydra.Chain.Direct.Tx (
   closeTx,
   collectComTx,
   commitTx,
+  contestTx,
   fanoutTx,
   initTx,
   observeAbortTx,
@@ -301,6 +303,20 @@ close confirmedSnapshot OnChainHeadState{ownVerificationKey, stateMachine} = do
    in closeTx ownVerificationKey sn sigs (i, o, dat)
  where
   Open{openThreadOutput} = stateMachine
+
+contest ::
+  ConfirmedSnapshot Tx ->
+  OnChainHeadState 'StClosed ->
+  Tx
+contest confirmedSnapshot OnChainHeadState{ownVerificationKey, stateMachine} = do
+  contestTx ownVerificationKey sn sigs (i, o, dat)
+ where
+  Closed{closedThreadOutput} = stateMachine
+  (i, o, dat, _) = closedThreadOutput
+  (sn, sigs) =
+    case confirmedSnapshot of
+      ConfirmedSnapshot{snapshot, signatures} -> (snapshot, signatures)
+      InitialSnapshot{snapshot} -> (snapshot, mempty)
 
 fanout ::
   UTxO ->
